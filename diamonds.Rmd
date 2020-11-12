@@ -1,0 +1,122 @@
+---
+title: "diamonds"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+
+```
+
+reading the data set
+```{r}
+jems <- read_csv("data/diamonds.csv")
+```
+
+Explore the data set
+```{r}
+summary(jems)
+
+str(jems)
+
+glimpse(jems)
+
+dim(jems)
+
+names(jems)
+
+rownames(jems)
+
+nrow(jems)
+
+jems %>% 
+head(5)
+
+jems %>% 
+  tail(5)
+```
+
+How many diamonds with a clarity of category “IF” are present in the data-set?
+```{r}
+
+jems %>% 
+  filter(clarity == "IF") -> clarity_IF
+clarity_IF
+```
+
+What fraction of the total do they represent?
+```{r}
+
+nrow(clarity_IF)/ nrow(jems)
+  
+```
+
+What proportion of the whole is made up of each category of clarity?
+```{r}
+
+jems %>% 
+  group_by(clarity) %>% 
+  summarise(mean(price))
+```
+
+What is the cheapest diamond price overall? 
+```{r}
+min(jems$price)
+
+```
+
+What is the range of diamond prices?
+```{r}
+range(jems$price)
+```
+
+What is the average diamond price in each category of cut and color?
+```{r}
+
+jems %>% 
+  group_by(cut, color) %>% 
+  summarise(mean(price))
+```
+
+
+Make a scatter plot that shows the price of a diamond as described by another continous variable, like the carat.
+```{r}
+ggplot(jems, aes(x= carat, y=price)) + 
+  geom_point()
+```
+
+using the functions we discuss earlier, and in class, apply a log10 transformation to both the price and carat. 
+
+```{r}
+jems3 <- jems %>%
+  mutate(log10_price = log10(price),
+         log10_carat = log10(carat))
+ggplot(jems3, aes(x= log10_carat, y=log10_price)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+
+to recreate a model that describes the relatioship shown in the plot
+```{r}
+jems_lm <- lm(log10_price  ~  log10_carat, data= jems3)
+
+```
+
+Now that we’ve described the diamond price given a single variable, can you display that on the plot? Try to use the geom_smooth() function to add this new layer.
+
+```{r}
+ggplot(jems3, aes(x= log10_carat, y=log10_price)) + 
+  geom_point() +
+  geom_smooth(method = "lm")
+
+```
+
+
+
+
+
